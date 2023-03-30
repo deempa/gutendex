@@ -1,4 +1,4 @@
-FROM python:3.9-alpine3.17
+FROM python:3.9
 
 WORKDIR /app
 
@@ -6,12 +6,9 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
+RUN apt-get update \
+    && apt-get install -y rsync
+
 COPY . .
 
-RUN ./manage.py migrate
-
-RUN ./manage.py updatecatalog
-
-# RUN ./manage.py collectstatic
-
-CMD [ "./manage.py", "runserver", "${BIND_HOST}:${BIND_PORT}" ]
+ENTRYPOINT [ "./entrypoint.sh" ]
