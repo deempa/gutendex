@@ -4,7 +4,9 @@ services:
       context: ./project/
       dockerfile: Dockerfile
     ports:
-      - 
+      - 8080:8080
+    env_file:
+      - ./project/.env
     networks:
       - backend
     depends_on:
