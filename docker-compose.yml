@@ -39,8 +39,8 @@ services:
       - 80:80
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./project/static:/static/static-content
-      - ./project/gutendex:/static/html
+      - ./project/static:/usr/share/nginx/html/static
+      - ./project/gutendex/templates/:/usr/share/nginx/html/
     networks:
       - frontend
     depends_on:
