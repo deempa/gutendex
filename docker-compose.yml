@@ -1,17 +1,4 @@
 services:
-  app:
-    build:
-      context: ./project/
-      dockerfile: Dockerfile
-    ports:
-      - 8000:8000
-    env_file:
-      - ./project/gutendex/.env
-    networks:
-      - backend
-    depends_on:
-      db:
-        condition: service_healthy
 
   db:
     image: postgres:14
@@ -24,16 +11,46 @@ services:
       - POSTGRES_DB=gutendex
     networks:
       - backend
+      - frontend
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  app:
+    build:
+      context: ./project/
+      dockerfile: Dockerfile
+    env_file:
+      - ./project/gutendex/.env
+    volumes:
+      - static-content:/var/www/gutendex/static-root
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      db:
+        condition: service_healthy
     
+  nginx:
+    image: nginx:1.22-alpine
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./project/static:/static/static-content
+      - ./project/gutendex:/static/html
+    networks:
+      - frontend
+    depends_on:
+      - app
+      - db
 
 volumes:
   db-data:
+  static-content:
 
 networks:
   frontend:
