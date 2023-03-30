@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: ./project/
+      dockerfile: Dockerfile
+    ports:
+      - 
+    networks:
+      - backend
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  db-data:
+
+networks:
+  frontend:
+  backend:
